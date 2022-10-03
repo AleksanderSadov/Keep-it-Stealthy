@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace KeepItStealthy.Gameplay
+namespace KeepItStealthy.Gameplay.Components
 {
 	public class MovementInputs : MonoBehaviour
 	{
