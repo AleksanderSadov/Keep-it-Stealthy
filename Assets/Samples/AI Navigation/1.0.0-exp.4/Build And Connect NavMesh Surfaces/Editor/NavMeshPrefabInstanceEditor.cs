@@ -40,7 +40,7 @@ namespace Unity.AI.Navigation.Samples.Editor
         void OnInspectorGUIPrefab(GameObject go)
         {
             var prefab = PrefabUtility.GetPrefabInstanceHandle(go);
-            var path = AssetDatabase.GetAssetPath(prefab);
+            var path = GetOpenedPrefabAssetPath();
 
             if (prefab && string.IsNullOrEmpty(path))
             {
@@ -88,7 +88,7 @@ namespace Unity.AI.Navigation.Samples.Editor
                 var instance = (NavMeshPrefabInstance) tgt;
                 var go = instance.gameObject;
                 var prefab = PrefabUtility.GetPrefabInstanceHandle(go);
-                var path = AssetDatabase.GetAssetPath(prefab);
+                var path = GetOpenedPrefabAssetPath();
 
                 if (string.IsNullOrEmpty(path))
                 {
@@ -108,7 +108,7 @@ namespace Unity.AI.Navigation.Samples.Editor
                 var instance = (NavMeshPrefabInstance) tgt;
                 var go = instance.gameObject;
                 var prefab = PrefabUtility.GetPrefabInstanceHandle(go);
-                var path = AssetDatabase.GetAssetPath(prefab);
+                var path = GetOpenedPrefabAssetPath();
 
                 if (string.IsNullOrEmpty(path))
                 {
@@ -120,10 +120,11 @@ namespace Unity.AI.Navigation.Samples.Editor
 
                 // Store navmesh as a sub-asset of the prefab
                 var navmesh = Build(instance);
-                AssetDatabase.AddObjectToAsset(navmesh, prefab);
+                AssetDatabase.AddObjectToAsset(navmesh, path);
 
                 instance.navMeshData = navmesh;
-                AssetDatabase.SaveAssets();
+                PrefabUtility.SaveAsPrefabAsset(instance.gameObject, path);
+                //AssetDatabase.SaveAssets();
             }
         }
 
@@ -137,6 +138,20 @@ namespace Unity.AI.Navigation.Samples.Editor
                 if (data != null)
                     DestroyImmediate(o, true);
             }
+        }
+
+        string GetOpenedPrefabAssetPath()
+        {
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage == null) return null;
+            return prefabStage.assetPath;
+        }
+
+        GameObject GetOpenedPrefabGameObject()
+        {
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+            if (prefabStage == null) return null;
+            return prefabStage.prefabContentsRoot;
         }
 
         [DrawGizmo(GizmoType.Selected | GizmoType.Active | GizmoType.Pickable)]
