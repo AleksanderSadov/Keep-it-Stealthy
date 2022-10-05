@@ -28,9 +28,16 @@ namespace KeepItStealthy.Gameplay.Helpers
 
             gridDivision = new(topLeftBoundPoint, topRightBoundPoint, gridStep: 0.1f);
             obstaclesGridPoints = gridDivision.GenerateGrid();
+
             obstacleHalfExtent = Vector3.Scale(
                 obstaclePrefab.transform.localScale / 2f,
-                obstaclePrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size);
+                obstaclePrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size
+            );
+
+            foreach (var gridPoint in obstaclesGridPoints)
+            {
+                gridPoint.point.y += obstacleHalfExtent.y;
+            }
         }
 
         public bool TrySpawnNextObstacle(out NavMeshObstacle obstacle)
@@ -44,7 +51,11 @@ namespace KeepItStealthy.Gameplay.Helpers
                 }
 
                 nextObstaclePoint.isAvailable = false;
-                obstacle = Object.Instantiate(obstaclePrefab, nextObstaclePoint.point, obstaclePrefab.transform.rotation);
+                obstacle = Object.Instantiate(
+                    obstaclePrefab,
+                    nextObstaclePoint.point,
+                    obstaclePrefab.transform.rotation
+                );
                 return true;
             }
 
