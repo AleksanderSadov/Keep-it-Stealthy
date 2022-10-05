@@ -1,3 +1,4 @@
+using KeepItStealthy.Core;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -28,10 +29,7 @@ namespace KeepItStealthy.Gameplay.Helpers
 
         public void Spawn()
         {
-            Vector3 obstacleSize = Vector3.Scale(
-                obstaclePrefab.transform.localScale,
-                obstaclePrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size
-            );
+            Vector3 obstacleSize = MeshAbsoluteSize.Calculate(obstaclePrefab.GetComponent<MeshFilter>());
 
             NavMeshObstacle topBoundObstacle = Object.Instantiate(
                 obstaclePrefab,
