@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: LevelSize
   m_EditorClassIdentifier: 
   levelSquareSize: 10
-  maxObstacles: 1
+  maxObstacles: 15

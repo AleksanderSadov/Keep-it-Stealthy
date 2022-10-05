@@ -1,7 +1,9 @@
 using KeepItStealthy.Core;
 using KeepItStealthy.Gameplay.Components;
+using KeepItStealthy.Gameplay.Constants;
 using KeepItStealthy.Gameplay.Helpers;
 using KeepItStealthy.Gameplay.ScriptableObjects;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -56,7 +58,11 @@ namespace KeepItStealthy.Gameplay.Managers
 
         private void SpawnObstacles()
         {
-            ObstaclesSpawner obstaclesSpawner = new(levelSizeSO.TopLeftPoint, levelSizeSO.BottomRightPoint, obstaclePrefab);
+            ObstaclesSpawner obstaclesSpawner = new(
+                levelSizeSO.TopLeftPoint,
+                levelSizeSO.BottomRightPoint,
+                obstaclePrefab,
+                forbiddenCollisionByTags: new List<string>{ TagsConstants.OBSTACLE, TagsConstants.ENTRY, TagsConstants.EXIT });
             int obstaclesCount = 0;
             while (obstaclesCount < levelSizeSO.MaxObstacles
                 && obstaclesSpawner.TrySpawnNextObstacle(out NavMeshObstacle obstacle))

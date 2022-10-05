@@ -14,23 +14,30 @@ namespace KeepItStealthy.Gameplay.Helpers
 
         private readonly NavMeshObstacle obstaclePrefab;
         private GridDivision<ObstaclesGridPoint> gridDivision;
-        private List<ObstaclesGridPoint> obstaclesGridPoints;
+        private readonly List<ObstaclesGridPoint> obstaclesGridPoints;
         private Vector3 obstacleHalfExtent;
+        private readonly List<string> forbiddenCollisionByTags;
 
-        public ObstaclesSpawner(Vector3 topLeftBoundPoint, Vector3 topRightBoundPoint, NavMeshObstacle obstaclePrefab)
+        public ObstaclesSpawner(
+            Vector3 topLeftBoundPoint,
+            Vector3 topRightBoundPoint,
+            NavMeshObstacle obstaclePrefab, List<string> forbiddenCollisionByTags = null)
         {
             this.obstaclePrefab = obstaclePrefab;
+            this.forbiddenCollisionByTags = forbiddenCollisionByTags;
 
             gridDivision = new(topLeftBoundPoint, topRightBoundPoint, gridStep: 0.1f);
             obstaclesGridPoints = gridDivision.GenerateGrid();
-            obstacleHalfExtent = Vector3.Scale(obstaclePrefab.transform.localScale / 2f, obstaclePrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size);
+            obstacleHalfExtent = Vector3.Scale(
+                obstaclePrefab.transform.localScale / 2f,
+                obstaclePrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size);
         }
 
         public bool TrySpawnNextObstacle(out NavMeshObstacle obstacle)
         {
             while (TryGetNextSpawnPoint(out ObstaclesGridPoint nextObstaclePoint))
             {
-                if (IsCollidingWithOtherObstacles(nextObstaclePoint.point))
+                if (IsCollidingWithForbiddenObjects(nextObstaclePoint.point))
                 {
                     nextObstaclePoint.isAvailable = false;
                     continue;
@@ -62,20 +69,21 @@ namespace KeepItStealthy.Gameplay.Helpers
             }
         }
 
-        private bool IsCollidingWithOtherObstacles(Vector3 spawnPosition)
+        private bool IsCollidingWithForbiddenObjects(Vector3 spawnPosition)
         {
             Collider[] hitColliders = Physics.OverlapBox(center: spawnPosition, halfExtents: obstacleHalfExtent);
 
             foreach (Collider collider in hitColliders)
             {
-                if (collider.GetComponent<NavMeshObstacle>() != null)
+                foreach (var tag in forbiddenCollisionByTags)
                 {
-                    return true;
+                    if (collider.CompareTag(tag))
+                    {
+                        return true;
+                    }
                 }
-                else
-                {
-                    continue;
-                }
+                
+                continue;
             }
 
             return false;
