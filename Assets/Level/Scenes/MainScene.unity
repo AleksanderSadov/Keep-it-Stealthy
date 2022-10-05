@@ -612,7 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbd75b9f7d9f8a64db73bb4aa7ac573d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldSizeSO: {fileID: 11400000, guid: 6ba76a20f5e98dc44bba973c9a6a4b76, type: 2}
+  levelSizeSO: {fileID: 11400000, guid: 6ba76a20f5e98dc44bba973c9a6a4b76, type: 2}
   obstaclePrefab: {fileID: 6643185395955451739, guid: 6dfecc015f6db3741ab7e0541913c4d3,
     type: 3}
   entryPrefab: {fileID: 1318115577370236737, guid: c56d404037aa0d041937354cfe36df40,

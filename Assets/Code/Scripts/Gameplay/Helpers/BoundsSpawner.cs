@@ -1,18 +1,29 @@
-using KeepItStealthy.Gameplay.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace KeepItStealthy.Gameplay.Helpers
 {
-    public class WorldBoundsSpawner
+    public class BoundsSpawner
     {
-        private readonly WorldSizeSO worldSizeSO;
+        private Vector3 topCenterPoint;
+        private Vector3 rightCenterPoint;
+        private Vector3 bottomCenterPoint;
+        private Vector3 leftCenterPoint;
+        private readonly float boundsWidth;
+        private readonly float boundsHeight;
         private readonly NavMeshObstacle obstaclePrefab;
 
-        public WorldBoundsSpawner(WorldSizeSO worldSizeSO, NavMeshObstacle obstaclePrefab)
+        public BoundsSpawner(Vector3 topLeftPoint, Vector3 bottomRightPoint, NavMeshObstacle obstaclePrefab)
         {
-            this.worldSizeSO = worldSizeSO;
             this.obstaclePrefab = obstaclePrefab;
+
+            boundsWidth = Mathf.Abs(bottomRightPoint.x - topLeftPoint.x);
+            boundsHeight = Mathf.Abs(bottomRightPoint.x - topLeftPoint.x);
+
+            topCenterPoint = new Vector3(topLeftPoint.x + boundsWidth / 2, topLeftPoint.y, topLeftPoint.z);
+            rightCenterPoint = new Vector3(bottomRightPoint.x, topLeftPoint.y, topLeftPoint.z - boundsWidth / 2);
+            bottomCenterPoint = new Vector3(bottomRightPoint.x - boundsWidth / 2, bottomRightPoint.y, bottomRightPoint.z);
+            leftCenterPoint = new Vector3(topLeftPoint.x, topLeftPoint.y, topLeftPoint.z - boundsWidth / 2);
         }
 
         public void Spawn()
@@ -25,14 +36,14 @@ namespace KeepItStealthy.Gameplay.Helpers
             NavMeshObstacle topBoundObstacle = Object.Instantiate(
                 obstaclePrefab,
                 new Vector3(
-                    worldSizeSO.TopCenterPoint.x,
-                    worldSizeSO.TopCenterPoint.y + obstacleSize.y / 2f,
-                    worldSizeSO.TopCenterPoint.z + obstacleSize.z / 2f
+                    topCenterPoint.x,
+                    topCenterPoint.y + obstacleSize.y / 2f,
+                    topCenterPoint.z + obstacleSize.z / 2f
                 ),
                 obstaclePrefab.transform.rotation
             );
             topBoundObstacle.transform.localScale = new(
-                worldSizeSO.WorldSquareSize + obstacleSize.x * 2,
+                boundsWidth + obstacleSize.x * 2,
                 obstacleSize.y,
                 obstacleSize.z
             );
@@ -40,29 +51,29 @@ namespace KeepItStealthy.Gameplay.Helpers
             NavMeshObstacle rightBoundObstacle = Object.Instantiate(
                 obstaclePrefab,
                 new Vector3(
-                    worldSizeSO.RightCenterPoint.x + obstacleSize.x / 2f,
-                    worldSizeSO.RightCenterPoint.y + obstacleSize.y / 2f,
-                    worldSizeSO.RightCenterPoint.z
+                    rightCenterPoint.x + obstacleSize.x / 2f,
+                    rightCenterPoint.y + obstacleSize.y / 2f,
+                    rightCenterPoint.z
                 ),
                 obstaclePrefab.transform.rotation
             );
             rightBoundObstacle.transform.localScale = new(
                 obstacleSize.x,
                 obstacleSize.y,
-                worldSizeSO.WorldSquareSize + obstacleSize.z * 2
+                boundsHeight + obstacleSize.z * 2
             );
 
             NavMeshObstacle bottomBoundObstacle = Object.Instantiate(
                 obstaclePrefab,
                 new Vector3(
-                    worldSizeSO.BottomCenterPoint.x,
-                    worldSizeSO.BottomCenterPoint.y + obstacleSize.y / 2f,
-                    worldSizeSO.BottomCenterPoint.z - obstacleSize.z / 2f
+                    bottomCenterPoint.x,
+                    bottomCenterPoint.y + obstacleSize.y / 2f,
+                    bottomCenterPoint.z - obstacleSize.z / 2f
                 ),
                 obstaclePrefab.transform.rotation
             );
             bottomBoundObstacle.transform.localScale = new(
-                worldSizeSO.WorldSquareSize + obstacleSize.x * 2,
+                boundsWidth + obstacleSize.x * 2,
                 obstacleSize.y,
                 obstacleSize.z
             );
@@ -70,16 +81,16 @@ namespace KeepItStealthy.Gameplay.Helpers
             NavMeshObstacle leftBoundObstacle = Object.Instantiate(
                 obstaclePrefab,
                 new Vector3(
-                    worldSizeSO.LeftCenterPoint.x - obstacleSize.x / 2f,
-                    worldSizeSO.LeftCenterPoint.y + obstacleSize.y / 2f,
-                    worldSizeSO.LeftCenterPoint.z
+                    leftCenterPoint.x - obstacleSize.x / 2f,
+                    leftCenterPoint.y + obstacleSize.y / 2f,
+                    leftCenterPoint.z
                 ),
                 obstaclePrefab.transform.rotation
             );
             leftBoundObstacle.transform.localScale = new(
                 obstacleSize.x,
                 obstacleSize.y,
-                worldSizeSO.WorldSquareSize + obstacleSize.z * 2
+                boundsHeight + obstacleSize.z * 2
             );
         }
     }
