@@ -41,9 +41,9 @@ namespace KeepItStealthy.Gameplay.Components
 
         private void Move()
         {
-            isRunning = input.move != Vector2.zero;
-            currentSpeed = movementCalculations.CalculateSmoothSpeed(input.move, controller.velocity, characterMovementSO.MaxMoveSpeed, characterMovementSO.SpeedAcceleration, Time.deltaTime);
-            Quaternion targetRotation = movementCalculations.CalculateTargetRotation(input.move, transform.rotation, mainCamera);
+            isRunning = input.Move != Vector2.zero;
+            currentSpeed = movementCalculations.CalculateSmoothSpeed(input.Move, controller.velocity, characterMovementSO.MaxMoveSpeed, characterMovementSO.SpeedAcceleration, Time.deltaTime);
+            Quaternion targetRotation = movementCalculations.CalculateTargetRotation(input.Move, transform.rotation, mainCamera);
             transform.rotation = movementCalculations.CalculateSmoothRotation(transform.rotation, targetRotation, characterMovementSO.RotationSmoothTime);
             controller.Move(movementCalculations.CalculateMotion(currentSpeed, targetRotation, Time.deltaTime));
         }

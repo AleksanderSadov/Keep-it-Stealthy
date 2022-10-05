@@ -2,6 +2,7 @@
     "name": "KeepItStealthy.Gameplay",
     "rootNamespace": "",
     "references": [
+        "GUID:fb43545a834aa9c41b6d28eb9511ef0c",
         "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],

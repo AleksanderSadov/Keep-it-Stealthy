@@ -5,17 +5,20 @@ namespace KeepItStealthy.Gameplay.Components
 {
 	public class MovementInputs : MonoBehaviour
 	{
-		[Header("Character Input Values")]
-		public Vector2 move;
+        [Header("Runtime")]
+        [SerializeField]
+        private Vector2 move;
 
-		public void OnMove(InputValue value)
+        public Vector2 Move { get => move; private set => move = value; }
+
+        public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
 
 		public void MoveInput(Vector2 newMoveDirection)
 		{
-			move = newMoveDirection;
+			Move = newMoveDirection;
 		}
 	}
 }
