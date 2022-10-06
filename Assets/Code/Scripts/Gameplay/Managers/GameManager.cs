@@ -1,6 +1,5 @@
 using KeepItStealthy.Core;
 using KeepItStealthy.Gameplay.Events;
-using KeepItStealthy.Gameplay.Managers;
 using System.Collections;
 using UnityEngine;
 
@@ -8,13 +7,6 @@ namespace KeepItStealthy.Gameplay.Components
 {
     public class GameManager : MonoBehaviour
     {
-        private LevelGenerator levelGenerator;
-
-        private void Awake()
-        {
-            levelGenerator = GetComponent<LevelGenerator>();
-        }
-
         private void OnEnable()
         {
             EventsManager.AddListener<PlayerExitEvent>(OnPlayerExit);
@@ -33,8 +25,7 @@ namespace KeepItStealthy.Gameplay.Components
         private IEnumerator StartGame()
         {
             yield return null;
-
-            levelGenerator.GenerateLevel();
+            EventsManager.Broadcast(new GameStartedEvent());
         }
 
         private void OnPlayerExit(PlayerExitEvent evt)

@@ -3,28 +3,14 @@ using UnityEngine;
 
 namespace KeepItStealthy.Core
 {
-    public class GridDivision<T> where T : GridPoint, new()
+    public static class GridGeneration<T> where T : GridPoint, new()
     {
-        private Vector3 topLeftPoint;
-        private Vector3 bottomRightPoint;
-        private float gridStep = 0.1f;
-        private float gridWidth;
-        private float gridHeight;
-        private List<T> gridPoints;
-
-        public GridDivision(Vector3 topLeftPoint, Vector3 bottomRightPoint, float gridStep)
+        public static List<T> Generate(Vector3 topLeftPoint, Vector3 bottomRightPoint, float gridStep)
         {
-            this.topLeftPoint = topLeftPoint;
-            this.bottomRightPoint = bottomRightPoint;
-            this.gridStep = gridStep;
+            float gridWidth = Mathf.Abs(bottomRightPoint.x - topLeftPoint.x);
+            float gridHeight = Mathf.Abs(bottomRightPoint.z - topLeftPoint.z);
 
-            gridWidth = Mathf.Abs(bottomRightPoint.x - topLeftPoint.x);
-            gridHeight = Mathf.Abs(bottomRightPoint.z - topLeftPoint.z);
-        }
-
-        public List<T> GenerateGrid()
-        {
-            gridPoints = new List<T>();
+            List<T> gridPoints = new();
             
             float currentPositionX = topLeftPoint.x;
             float currentPositionY = topLeftPoint.y;

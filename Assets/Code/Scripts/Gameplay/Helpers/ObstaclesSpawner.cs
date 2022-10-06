@@ -7,42 +7,41 @@ namespace KeepItStealthy.Gameplay.Helpers
 {
     public class ObstaclesSpawner
     {
-        private class ObstaclesGridPoint : GridPoint
-        {
-            public bool isAvailable = true;
-        }
-
         private readonly NavMeshObstacle obstaclePrefab;
-        private GridDivision<ObstaclesGridPoint> gridDivision;
-        private readonly List<ObstaclesGridPoint> obstaclesGridPoints;
-        private Vector3 obstacleHalfExtent;
+        private readonly List<SpawnGridPoint> obstaclesGridPoints;
+        private Vector3 obstacleHalfSize;
         private readonly List<string> forbiddenCollisionByTags;
 
         public ObstaclesSpawner(
-            Vector3 topLeftBoundPoint,
-            Vector3 topRightBoundPoint,
-            NavMeshObstacle obstaclePrefab, List<string> forbiddenCollisionByTags = null)
+            Vector3 topLeftPoint,
+            Vector3 bottomRightPoint,
+            NavMeshObstacle obstaclePrefab,
+            float minFreePathWidth,
+            List<string> forbiddenCollisionByTags = null)
         {
             this.obstaclePrefab = obstaclePrefab;
             this.forbiddenCollisionByTags = forbiddenCollisionByTags;
 
-            gridDivision = new(topLeftBoundPoint, topRightBoundPoint, gridStep: 0.1f);
-            obstaclesGridPoints = gridDivision.GenerateGrid();
+            obstacleHalfSize = MeshAbsoluteSize.Calculate(obstaclePrefab.GetComponent<MeshFilter>()) / 2f;
 
-            obstacleHalfExtent = Vector3.Scale(
-                obstaclePrefab.transform.localScale / 2f,
-                obstaclePrefab.GetComponent<MeshFilter>().sharedMesh.bounds.size
+            obstaclesGridPoints = GridGeneration<SpawnGridPoint>.Generate(
+                topLeftPoint: new Vector3(
+                    topLeftPoint.x + obstacleHalfSize.x,
+                    topLeftPoint.y + obstacleHalfSize.y,
+                    topLeftPoint.z - obstacleHalfSize.z
+                ),
+                bottomRightPoint: new Vector3(
+                    bottomRightPoint.x - obstacleHalfSize.x,
+                    bottomRightPoint.y + obstacleHalfSize.y,
+                    bottomRightPoint.z + obstacleHalfSize.z
+                ),
+                gridStep: minFreePathWidth
             );
-
-            foreach (var gridPoint in obstaclesGridPoints)
-            {
-                gridPoint.point.y += obstacleHalfExtent.y;
-            }
         }
 
         public bool TrySpawnNextObstacle(out NavMeshObstacle obstacle)
         {
-            while (TryGetNextSpawnPoint(out ObstaclesGridPoint nextObstaclePoint))
+            while (TryGetNextSpawnPoint(out SpawnGridPoint nextObstaclePoint))
             {
                 if (IsCollidingWithForbiddenObjects(nextObstaclePoint.point))
                 {
@@ -63,9 +62,9 @@ namespace KeepItStealthy.Gameplay.Helpers
             return false;
         }
 
-        private bool TryGetNextSpawnPoint(out ObstaclesGridPoint obstaclePoint)
+        private bool TryGetNextSpawnPoint(out SpawnGridPoint obstaclePoint)
         {
-            List<ObstaclesGridPoint> availableObstaclePoints = obstaclesGridPoints.FindAll(p => p.isAvailable);
+            List<SpawnGridPoint> availableObstaclePoints = obstaclesGridPoints.FindAll(p => p.isAvailable);
 
             if (availableObstaclePoints.Count > 0)
             {
@@ -82,7 +81,7 @@ namespace KeepItStealthy.Gameplay.Helpers
 
         private bool IsCollidingWithForbiddenObjects(Vector3 spawnPosition)
         {
-            Collider[] hitColliders = Physics.OverlapBox(center: spawnPosition, halfExtents: obstacleHalfExtent);
+            Collider[] hitColliders = Physics.OverlapBox(center: spawnPosition, halfExtents: obstacleHalfSize);
 
             foreach (Collider collider in hitColliders)
             {

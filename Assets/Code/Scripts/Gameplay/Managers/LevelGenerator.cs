@@ -1,6 +1,7 @@
 using KeepItStealthy.Core;
 using KeepItStealthy.Gameplay.Components;
 using KeepItStealthy.Gameplay.Constants;
+using KeepItStealthy.Gameplay.Events;
 using KeepItStealthy.Gameplay.Helpers;
 using KeepItStealthy.Gameplay.ScriptableObjects;
 using System.Collections.Generic;
@@ -20,6 +21,16 @@ namespace KeepItStealthy.Gameplay.Managers
         [SerializeField]
         private ExitPoint exitPrefab;
 
+        private void OnEnable()
+        {
+            EventsManager.AddListener<GameStartedEvent>(OnGameStarted);
+        }
+
+        private void OnDisable()
+        {
+            EventsManager.RemoveListener<GameStartedEvent>(OnGameStarted);
+        }
+
         public void GenerateLevel()
         {
             SpawnLevelBounds();
@@ -27,6 +38,8 @@ namespace KeepItStealthy.Gameplay.Managers
             SpawnExit();
             SpawnObstacles();
         }
+
+        private void OnGameStarted(GameStartedEvent evt) => GenerateLevel();
 
         private void SpawnLevelBounds()
         {
@@ -62,10 +75,18 @@ namespace KeepItStealthy.Gameplay.Managers
                 levelSizeSO.TopLeftPoint,
                 levelSizeSO.BottomRightPoint,
                 obstaclePrefab,
-                forbiddenCollisionByTags: new List<string>{ TagsConstants.OBSTACLE, TagsConstants.ENTRY, TagsConstants.EXIT });
+                minFreePathWidth: 1f,
+                forbiddenCollisionByTags: new List<string>{
+                    TagsConstants.PLAYER,
+                    TagsConstants.OBSTACLE,
+                    TagsConstants.ENTRY,
+                    TagsConstants.EXIT 
+                });
             int obstaclesCount = 0;
-            while (obstaclesCount < levelSizeSO.MaxObstacles
-                && obstaclesSpawner.TrySpawnNextObstacle(out NavMeshObstacle obstacle))
+            while (
+                obstaclesCount < levelSizeSO.MaxObstacles
+                && obstaclesSpawner.TrySpawnNextObstacle(out NavMeshObstacle obstacle)
+            )
             {
                 obstaclesCount++;
             }
