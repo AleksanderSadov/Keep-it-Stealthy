@@ -13,7 +13,13 @@ namespace KeepItStealthy.Gameplay.Managers
     public class LevelGenerator : MonoBehaviour
     {
         [SerializeField]
-        private LevelSizeSO levelSizeSO;
+        private LevelConfigSO levelSizeSO;
+        [SerializeField]
+        private TeamsListSO teamsListSO;
+        [SerializeField]
+        private PlayerController playerPrefab;
+        [SerializeField]
+        private EnemyController enemyPrefab;
         [SerializeField]
         private NavMeshObstacle obstaclePrefab;
         [SerializeField]
@@ -34,8 +40,10 @@ namespace KeepItStealthy.Gameplay.Managers
         public void GenerateLevel()
         {
             SpawnLevelBounds();
-            SpawnEntry();
-            SpawnExit();
+            EntryPoint entryPoint = SpawnEntry();
+            ExitPoint exitPoint = SpawnExit();
+            SpawnPlayer(entryPoint.transform.position);
+            SpawnEnemies();
             SpawnObstacles();
         }
 
@@ -47,7 +55,7 @@ namespace KeepItStealthy.Gameplay.Managers
             levelBoundsSpawner.Spawn();
         }
 
-        private void SpawnEntry()
+        private EntryPoint SpawnEntry()
         {
             Vector3 entrySize = MeshAbsoluteSize.Calculate(entryPrefab.GetComponent<MeshFilter>());
             Vector3 entryPosition = new Vector3(
@@ -56,9 +64,10 @@ namespace KeepItStealthy.Gameplay.Managers
                 levelSizeSO.BottomLeftPoint.z + entrySize.z / 2
             );
             EntryPoint entryPoint = Instantiate(entryPrefab, entryPosition, entryPrefab.transform.rotation);
+            return entryPoint;
         }
 
-        private void SpawnExit()
+        private ExitPoint SpawnExit()
         {
             Vector3 exitSize = MeshAbsoluteSize.Calculate(exitPrefab.GetComponent<MeshFilter>());
             Vector3 exitPosition = new Vector3(
@@ -67,6 +76,36 @@ namespace KeepItStealthy.Gameplay.Managers
                 levelSizeSO.TopRightPoint.z - exitSize.z / 2
             );
             ExitPoint exitPoint = Instantiate(exitPrefab, exitPosition, entryPrefab.transform.rotation);
+            return exitPoint;
+        }
+
+        private PlayerController SpawnPlayer(Vector3 spawnPosition)
+        {
+            PlayerController player = Instantiate(playerPrefab, spawnPosition, playerPrefab.transform.rotation);
+            return player;
+        }
+
+        private void SpawnEnemies()
+        {
+            EnemiesSpawner enemiesSpawner = new(
+                levelSizeSO.TopLeftPoint,
+                levelSizeSO.BottomRightPoint,
+                enemyPrefab,
+                forbiddenCollisionByTags: new List<string>{
+                    TagsConstants.PLAYER,
+                    TagsConstants.ENEMY,
+                    TagsConstants.OBSTACLE,
+                    TagsConstants.ENTRY,
+                    TagsConstants.EXIT
+                });
+            int enemiesCount = 0;
+            while (
+                enemiesCount < levelSizeSO.MaxEnemies
+                && enemiesSpawner.TrySpawnNextEnemy(out EnemyController enemy)
+            )
+            {
+                enemiesCount++;
+            }
         }
 
         private void SpawnObstacles()
@@ -78,6 +117,7 @@ namespace KeepItStealthy.Gameplay.Managers
                 minFreePathWidth: 1f,
                 forbiddenCollisionByTags: new List<string>{
                     TagsConstants.PLAYER,
+                    TagsConstants.ENEMY,
                     TagsConstants.OBSTACLE,
                     TagsConstants.ENTRY,
                     TagsConstants.EXIT 

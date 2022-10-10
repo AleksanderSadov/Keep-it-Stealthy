@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace KeepItStealthy.Gameplay.ScriptableObjects
 {
-    [CreateAssetMenu(fileName = "LevelSize", menuName = "ScriptableObjects/LevelSize")]
-    public class LevelSizeSO : ScriptableObject
+    [CreateAssetMenu(fileName = "LevelConfig", menuName = "ScriptableObjects/LevelConfig")]
+    public class LevelConfigSO : ScriptableObject
     {
         private static int MIN_WORLD_SQUARE_SIZE = 6;
         private static int MAX_WORLD_SQUARE_SIZE = 100;
@@ -14,6 +14,9 @@ namespace KeepItStealthy.Gameplay.ScriptableObjects
         [SerializeField]
         [Tooltip("Max number of obstacles on the level")]
         private int maxObstacles = 10;
+        [SerializeField]
+        [Tooltip("Max number of enemies on the level")]
+        private int maxEnemies = 1;
 
         private Vector3 topLeftPoint;
         private Vector3 topRightPoint;
@@ -36,7 +39,7 @@ namespace KeepItStealthy.Gameplay.ScriptableObjects
         public Vector3 RightCenterPoint { get => rightCenterPoint; private set => rightCenterPoint = value; }
         public Vector3 BottomCenterPoint { get => bottomCenterPoint; private set => bottomCenterPoint = value; }
         public Vector3 LeftCenterPoint { get => leftCenterPoint; private set => leftCenterPoint = value; }
-        
+        public int MaxEnemies { get => maxEnemies; private set => maxEnemies = value; }
 
         private void Awake()
         {

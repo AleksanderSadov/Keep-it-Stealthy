@@ -535,7 +535,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 35bbea1f1800cce43b2d89d04d8e924d, type: 2}
+  - {fileID: 2100000, guid: 8de7bb89b4f71724e96433b5a7fed112, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -607,6 +607,7 @@ GameObject:
   - component: {fileID: 1211160858}
   - component: {fileID: 1211160859}
   - component: {fileID: 1211160860}
+  - component: {fileID: 1567173929918514128}
   m_Layer: 0
   m_Name: StickmanPlayer
   m_TagString: Player
@@ -729,6 +730,19 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1567173929918514128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5489709490513765811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcad249509441ec4c8dec1dd940bcda1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  teamAffiliation: 0
 --- !u!1 &5598877492621872117
 GameObject:
   m_ObjectHideFlags: 0
